@@ -18,16 +18,56 @@ function createEmployeeRecords(empArray){
 function createTimeInEvent(dateTime){
     let dateTimeArray = dateTime.split(' ')
     let thisDate = dateTimeArray[0]
-    let thisTime = dateTimeArray[1]
+    let thisTime = parseInt(dateTimeArray[1])
 
     const hash = {
         type: 'TimeIn',
         hour: thisTime,
         date: thisDate
     }
-    console.log(hash+','+ dateTimeArray)
     this.timeInEvents.push(hash)
-    return hash
+    return this
+}
+
+function createTimeOutEvent(dateTime){
+    let dateTimeArray = dateTime.split(' ')
+    let thisDate = dateTimeArray[0]
+    let thisTime = parseInt(dateTimeArray[1])
+
+    const hash = {
+        type: 'TimeOut',
+        hour: thisTime,
+        date: thisDate
+    }
+
+    this.timeOutEvents.push(hash)
+    return this
+}
+
+function hoursWorkedOnDate(date){
+    let hourIn = this.timeInEvents.find(x => x.date === date).hour
+    let hourOut = this.timeOutEvents.find(x => x.date === date).hour
+    let hoursWorked = (hourOut - hourIn) / 100
+
+    return hoursWorked
+}
+
+function wagesEarnedOnDate(date){
+    const hoursWorked = hoursWorkedOnDate.bind(this)(date)
+    const pay = hoursWorked * this.payPerHour
+    return pay
+}
+
+function findEmployeeByFirstName(empArray, name){
+    let emp = empArray.find(x => x.firstName === name)
+    return emp
+}
+
+function calculatePayroll(empArray){
+    let total = empArray.reduce((col, emp) => {
+        return col + allWagesFor.bind(emp)()
+    }, 0)
+    return total
 }
 
 /*
