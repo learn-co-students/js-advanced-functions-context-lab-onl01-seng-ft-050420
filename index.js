@@ -9,14 +9,62 @@
  for you to use if you need it!
  */
 
-let allWagesFor = function () {
-    let eligibleDates = this.timeInEvents.map(function (e) {
-        return e.date
-    })
+ function createEmployeeRecord(record) {
+   return {
+     firstName: record[0],
+     familyName: record[1],
+     title: record[2],
+     payPerHour: record[3],
+     timeInEvents: [],
+     timeOutEvents: []
+   }
+ }
 
-    let payable = eligibleDates.reduce(function (memo, d) {
-        return memo + wagesEarnedOnDate.call(this, d)
-    }.bind(this), 0) // <== Hm, why did we need to add bind() there? We'll discuss soon!
+ function createEmployeeRecords(arrayOfArrays) {
+   return arrayOfArrays.map(record => createEmployeeRecord(record))
+ }
 
-    return payable
-}
+ function createTimeEvent(type, dateTimeStamp) {
+   const [date, time] = dateTimeStamp.split(' ')
+   return { type: type, hour: parseInt(time, 10), date: date }
+ }
+
+ function createTimeInEvent(dateTimeStamp) {
+   this.timeInEvents.push(createTimeEvent('TimeIn', dateTimeStamp))
+   return this
+ }
+
+ function createTimeOutEvent(dateTimeStamp) {
+   this.timeOutEvents.push(createTimeEvent('TimeOut', dateTimeStamp))
+   return this
+ }
+
+ function createTimeOutEvent(dateTimeStamp) {
+   this.timeOutEvents.push(createTimeEvent('TimeOut', dateTimeStamp))
+   return this
+ }
+
+ function hoursWorkedOnDate(dateStamp) {
+   const timeIn = this.timeInEvents.find(e => e.date === dateStamp)
+   const timeOut = this.timeOutEvents.find(e => e.date === dateStamp)
+   return (timeOut.hour - timeIn.hour) / 100
+ }
+
+ function wagesEarnedOnDate(dateStamp) {
+   return hoursWorkedOnDate.call(this, dateStamp) * this.payPerHour
+ }
+
+ function allWagesFor() {
+   let callback = (total, timeEvent) => {
+     return total + wagesEarnedOnDate.call(this, timeEvent.date)
+   }
+   return this.timeOutEvents.reduce(callback.bind(this), 0)
+ }
+
+ function findEmployeeByFirstName(array, firstName) {
+   return array.find(record => record.firstName === firstName)
+ }
+
+ function calculatePayroll(records) {
+   return records.reduce((total, record) => total + allWagesFor.call(record), 0)
+ }
