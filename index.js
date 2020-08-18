@@ -11,12 +11,70 @@
 
 let allWagesFor = function () {
     let eligibleDates = this.timeInEvents.map(function (e) {
-        return e.date
+        return e.date;
     })
 
     let payable = eligibleDates.reduce(function (memo, d) {
-        return memo + wagesEarnedOnDate.call(this, d)
-    }.bind(this), 0) // <== Hm, why did we need to add bind() there? We'll discuss soon!
+        return memo + wagesEarnedOnDate.call(this, d);
+    }.bind(this), 0); // <== Hm, why did we need to add bind() there? We'll discuss soon!
 
-    return payable
+    return payable;
+}
+
+function createEmployeeRecord(array) {
+    const employee = {
+        firstName: array[0],
+        familyName: array[1],
+        title: array[2],
+        payPerHour: array[3],
+        timeInEvents: [],
+        timeOutEvents: []
+    };
+    return employee;
+}
+
+function createEmployeeRecords(array) {
+    return array.map(createEmployeeRecord);
+}
+
+function createTimeInEvent(time) {
+    const dateTime = time.split(" ")
+    const timeObj = {type: "TimeIn", date: dateTime[0], hour: parseInt(dateTime[1], 10)};
+    this.timeInEvents.push(timeObj);
+    return this;
+}
+
+function createTimeOutEvent(time) {
+    const dateTime = time.split(" ")
+    const timeObj = {type: "TimeOut", date: dateTime[0], hour: parseInt(dateTime[1], 10)};
+    this.timeOutEvents.push(timeObj);
+    return this;
+}
+
+function hoursWorkedOnDate(date) {
+    const dateIn = this.timeInEvents.find(x => x.date === date);
+    const dateOut = this.timeOutEvents.find(x => x.date === date);
+    return (dateOut.hour - dateIn.hour) * 0.01;
+}
+
+function wagesEarnedOnDate(date) {
+    const hours = hoursWorkedOnDate.call(this, date);
+    return hours * this.payPerHour;
+}
+
+// function allWagesFor(emp) {
+//     // let pay = 0;
+//     // for (const day of emp.timeInEvents) {
+//     //     pay += wagesEarnedOnDate(emp, day.date);
+//     // }
+//     // return pay;
+//     return emp.timeInEvents.reduce((acc, cur) => acc + wagesEarnedOnDate(emp, cur.date), 0)
+// }
+
+function calculatePayroll(emps) {
+    return emps.reduce((acc, cur) => acc + allWagesFor.call(cur), 0)
+}
+
+function findEmployeeByFirstName(emps, name) {
+    return emps.find(x => x.firstName === name);
 }
