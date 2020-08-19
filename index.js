@@ -1,15 +1,61 @@
 /* Your Code Here */
+function createEmployeeRecord(arr){
+    let employee = {
+        firstName: arr[0],
+        familyName: arr[1],
+        title: arr[2],
+        payPerHour: arr[3],
+        timeInEvents: [],
+        timeOutEvents: []
+    };
+    return employee;
+};
 
-/*
- We're giving you this function. Take a look at it, you might see some usage
- that's new and different. That's because we're avoiding a well-known, but
- sneaky bug that we'll cover in the next few lessons!
+function createEmployeeRecords(arr){
+    let employees = arr.map(e => createEmployeeRecord(e))
+    return employees;
+};
 
- As a result, the lessons for this function will pass *and* it will be available
- for you to use if you need it!
- */
+function createTimeInEvent(dateStamp){
+    let [date , time] = dateStamp.split(' ')
 
-let allWagesFor = function () {
+    this.timeInEvents.push({
+        type: "TimeIn",
+        hour: parseInt(time),
+        date: date,
+    })
+
+    return this 
+}
+
+function createTimeOutEvent(dateStamp){
+    let [date , time] = dateStamp.split(' ')
+
+    this.timeOutEvents.push({
+        type: "TimeOut",
+        hour: parseInt(time),
+        date: date,
+    })
+
+    return this
+}
+
+function hoursWorkedOnDate(dateStamp){
+    let timeIn = this.timeInEvents.find(day => day.date === dateStamp)
+    let hourIn = timeIn.hour
+    
+    let timeOut = this.timeOutEvents.find(day => day.date === dateStamp)
+    let hourOut = timeOut.hour
+
+    const hours = (hourOut - hourIn) / 100
+    return hours 
+}
+
+function wagesEarnedOnDate(dateStamp){
+    return hoursWorkedOnDate.call(this, dateStamp) * this.payPerHour
+}
+
+function allWagesFor() {
     let eligibleDates = this.timeInEvents.map(function (e) {
         return e.date
     })
@@ -19,4 +65,16 @@ let allWagesFor = function () {
     }.bind(this), 0) // <== Hm, why did we need to add bind() there? We'll discuss soon!
 
     return payable
+}
+
+function findEmployeeByFirstName(srcArray,firstName){
+    return srcArray.find(function(employee){
+       return employee.firstName === firstName
+    })
+}
+
+function calculatePayroll(arr){
+    return arr.reduce(function(acc,total){
+        return acc + allWagesFor.call(total)
+    }, 0)
 }
