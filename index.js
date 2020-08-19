@@ -78,7 +78,7 @@ function calculatePayroll(empObjs){
     //use wages earned on date
     return empObjs.reduce(function(total, record){
         return total + allWagesFor.call(record)
-    }.bind(this), 0)
+    }, 0)
 }
 
 function findEmployeeByFirstName(srcArray, firstName) {
